@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getToken } from '../utils/auth';
 
@@ -6,7 +6,7 @@ function Dashboard() {
   const [stats, setStats] = useState({ total: 0, success: 0, failed: 0 });
 
   const fetchStats = async () => {
-    const res = await axios.get('http://localhost:5000/api/dashboard-stats', {
+    const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/dashboard-stats`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     });
     setStats(res.data);

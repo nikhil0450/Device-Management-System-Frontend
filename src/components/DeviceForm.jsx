@@ -1,40 +1,41 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { getToken } from '../utils/auth';
 
-function DeviceForm() {
+function DeviceForm({ onDeviceAdded }) {
   const [form, setForm] = useState({ ip_address: '', hostname: '', serial: '' });
   const [fetchIp, setFetchIp] = useState('');
   const [fetchMsg, setFetchMsg] = useState('');
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
-const handleSubmit = async e => {
-  e.preventDefault();
-  if (!form.ip_address.trim()) {
-    alert('IP address is required');
-    return;
-  }
+  const handleSubmit = async e => {
+    e.preventDefault();
+    if (!form.ip_address.trim()) {
+      alert('IP address is required');
+      return;
+    }
 
-  try {
-    await axios.post('http://localhost:5000/api/devices', form, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    });
-    alert('Device added!');
-    setForm({ ip_address: '', hostname: '', serial: '' });
-  } catch (err) {
-    console.error('Add device failed:', err.response?.data || err.message);
-    alert('Failed to add device: ' + (err.response?.data?.error || 'Unknown error'));
-  }
-};
-
+    try {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/devices`, form, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      alert('Device added!');
+      setForm({ ip_address: '', hostname: '', serial: '' });
+      onDeviceAdded(); // Refresh device list after adding
+    } catch (err) {
+      console.error('Add device failed:', err.response?.data || err.message);
+      alert('Failed to add device: ' + (err.response?.data?.error || 'Unknown error'));
+    }
+  };
 
   const handleFetch = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/devices/fetch', { ip_address: fetchIp }, {
-        headers: { Authorization: `Bearer ${getToken()}` }
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/devices/fetch`, { ip_address: fetchIp }, {
+        headers: { Authorization: `Bearer ${getToken()}` },
       });
       setFetchMsg(`Fetched and saved data for ${res.data.ip_address}`);
+      onDeviceAdded(); // Refresh list after fetch
     } catch {
       setFetchMsg('Failed to fetch data');
     }
@@ -68,8 +69,8 @@ const handleSubmit = async e => {
         <div className="col">
           <button className="btn btn-success" onClick={handleFetch}>Fetch</button>
         </div>
+        {fetchMsg && <div className="col-12 mt-2 text-muted">{fetchMsg}</div>}
       </div>
-      {fetchMsg && <div className="alert alert-info">{fetchMsg}</div>}
     </>
   );
 }
