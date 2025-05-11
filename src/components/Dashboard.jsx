@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { getToken } from '../utils/auth';
 
 function Dashboard() {
   const [stats, setStats] = useState({ total: 0, success: 0, failed: 0 });
 
   const fetchStats = async () => {
-    const res = await axios.get('http://localhost:5000/api/dashboard-stats');
+    const res = await axios.get('http://localhost:5000/api/dashboard-stats', {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    });
     setStats(res.data);
   };
 
@@ -19,15 +22,9 @@ function Dashboard() {
     <div className="mb-4">
       <h4>Dashboard</h4>
       <div className="row">
-        <div className="col">
-          <div className="alert alert-primary">Total Devices: {stats.total}</div>
-        </div>
-        <div className="col">
-          <div className="alert alert-success">Success Pings: {stats.success}</div>
-        </div>
-        <div className="col">
-          <div className="alert alert-danger">Failed Pings: {stats.failed}</div>
-        </div>
+        <div className="col"><div className="alert alert-primary">Total Devices: {stats.total}</div></div>
+        <div className="col"><div className="alert alert-success">Success Pings: {stats.success}</div></div>
+        <div className="col"><div className="alert alert-danger">Failed Pings: {stats.failed}</div></div>
       </div>
     </div>
   );

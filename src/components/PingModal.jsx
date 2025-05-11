@@ -7,9 +7,7 @@ function PingModal({ show, onHide, output }) {
       <Modal.Header closeButton>
         <Modal.Title>Ping Output</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        <pre>{output}</pre>
-      </Modal.Body>
+      <Modal.Body><pre>{output}</pre></Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>Close</Button>
       </Modal.Footer>

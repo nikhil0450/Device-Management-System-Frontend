@@ -1,17 +1,19 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import DeviceTable from './components/DeviceTable';
-import DeviceForm from './components/DeviceForm';
-import Dashboard from './components/Dashboard';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './components/Login';
+import Register from './components/Register';
+import Home from './pages/Home';
+import { isLoggedIn } from './utils/auth';
 
 function App() {
   return (
-    <div className="container mt-4">
-      <h2 className="mb-3">Device Management</h2>
-      <Dashboard />
-      <DeviceForm />
-      <DeviceTable />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={isLoggedIn() ? <Home /> : <Navigate to="/login" />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </Router>
   );
 }
 
